@@ -1,0 +1,53 @@
+---
+name: test
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Docker tag (default)"
+        id: tag
+        uses: ./
+
+      - name: "Docker tag (prefix)"
+        id: tag_prefix
+        uses: ./
+        with:
+          non_latest_docker_tag_prefix: "1-"
+
+      - name: "Docker tag (suffix)"
+        id: tag_suffix
+        uses: ./
+        with:
+          non_latest_docker_tag_suffix: "-2"
+
+      - name: "Docker tag (alt latest)"
+        id: tag_alt_latest
+        uses: ./
+        with:
+          latest_docker_tag_name: "earliest"
+
+      - name: "Output (default)"
+        run: |
+          echo "${{ steps.tag.outputs.docker-tag }}"
+
+      - name: "Output (prefix)"
+        run: |
+          echo "${{ steps.tag_prefix.outputs.docker-tag }}"
+
+      - name: "Output (suffix)"
+        run: |
+          echo "${{ steps.tag_suffix.outputs.docker-tag }}"
+
+      - name: "Output (alt latest)"
+        run: |
+          echo "${{ steps.tag_alt_latest.outputs.docker-tag }}"
